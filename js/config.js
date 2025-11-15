@@ -12,7 +12,7 @@ const CONFIG = {
     DEFAULT_ZOOM: 15,
 
     // Raio de proximidade para chat (km)
-    CHAT_RADIUS: 2,
+    CHAT_RADIUS: 3,
 
     // Raio de proximidade para notificações (km)
     NOTIFICATION_RADIUS: 1,

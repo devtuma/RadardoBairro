@@ -160,6 +160,11 @@ const PostsManager = {
             const votesResponse = await API.votes.get(postId);
             const votes = votesResponse.data;
 
+            // Buscar comentários
+            const commentsResponse = await API.postComments.get(postId);
+            const comments = commentsResponse.data.comments || [];
+            const commentCount = comments.length;
+
             // Criar conteúdo do modal
             const content = `
                 <div class="post-details-header">
@@ -169,6 +174,9 @@ const PostsManager = {
                             ${getCategoryLabel(post.category)}
                         </div>
                     </div>
+                    <button class="btn-report" onclick="PostsManager.reportPost(${postId})" title="Reportar post">
+                        <i class="fas fa-flag"></i>
+                    </button>
                 </div>
                 <h2 class="post-details-title">${post.title}</h2>
                 <div class="post-details-time">
@@ -207,9 +215,22 @@ const PostsManager = {
                         <span class="stat-label">Total de Votos</span>
                     </div>
                     <div class="stat-item">
-                        <span class="stat-value">${post.vote_count || 0}</span>
-                        <span class="stat-label">Engajamento</span>
+                        <span class="stat-value">${commentCount}</span>
+                        <span class="stat-label">Comentários</span>
                     </div>
+                </div>
+
+                <h3 style="margin-top: 2rem; margin-bottom: 1rem;">
+                    <i class="fas fa-comments"></i> Comentários (${commentCount})
+                </h3>
+                <div class="post-comments" id="postComments">
+                    ${this.renderComments(comments, postId)}
+                </div>
+                <div class="comment-input-container">
+                    <textarea id="commentInput" placeholder="Escreva um comentário..." maxlength="500" rows="2"></textarea>
+                    <button class="btn-comment" onclick="PostsManager.addComment(${postId})">
+                        <i class="fas fa-paper-plane"></i> Comentar
+                    </button>
                 </div>
             `;
 
@@ -223,6 +244,165 @@ const PostsManager = {
             console.error('Erro ao mostrar detalhes:', error);
             showToast('Erro ao carregar detalhes do post', 'error');
         }
+    },
+
+    /**
+     * Renderizar comentários
+     */
+    renderComments(comments, postId) {
+        if (comments.length === 0) {
+            return '<p style="text-align: center; color: #9ca3af; padding: 2rem;">Seja o primeiro a comentar!</p>';
+        }
+
+        let html = '';
+        comments.forEach(comment => {
+            html += `
+                <div class="comment-item">
+                    <div class="comment-header">
+                        <span><i class="fas fa-user-secret"></i> Anônimo</span>
+                        <span class="comment-time">${comment.time_ago}</span>
+                        <button class="btn-report-small" onclick="PostsManager.reportComment(${comment.id})" title="Reportar comentário">
+                            <i class="fas fa-flag"></i>
+                        </button>
+                    </div>
+                    <div class="comment-text">${this.escapeHtml(comment.message)}</div>
+                </div>
+            `;
+        });
+        return html;
+    },
+
+    /**
+     * Adicionar comentário
+     */
+    async addComment(postId) {
+        try {
+            const input = document.getElementById('commentInput');
+            const message = input.value.trim();
+
+            if (!message) {
+                showToast('Digite um comentário', 'error');
+                return;
+            }
+
+            if (message.length > 500) {
+                showToast('Comentário muito longo (máximo 500 caracteres)', 'error');
+                return;
+            }
+
+            const response = await API.postComments.add(postId, message);
+
+            if (response.success) {
+                input.value = '';
+                showToast('Comentário enviado!', 'success');
+
+                // Recarregar detalhes do post
+                await this.showPostDetails(postId);
+            }
+        } catch (error) {
+            showToast(error.message || 'Erro ao enviar comentário', 'error');
+        }
+    },
+
+    /**
+     * Reportar post
+     */
+    async reportPost(postId) {
+        const reason = await this.showReportDialog();
+        if (!reason) return;
+
+        try {
+            const response = await API.reports.report('post', postId, reason);
+
+            if (response.success) {
+                showToast(response.message, 'success');
+            }
+        } catch (error) {
+            showToast(error.message || 'Erro ao reportar post', 'error');
+        }
+    },
+
+    /**
+     * Reportar comentário
+     */
+    async reportComment(commentId) {
+        const reason = await this.showReportDialog();
+        if (!reason) return;
+
+        try {
+            const response = await API.reports.report('comment', commentId, reason);
+
+            if (response.success) {
+                showToast(response.message, 'success');
+            }
+        } catch (error) {
+            showToast(error.message || 'Erro ao reportar comentário', 'error');
+        }
+    },
+
+    /**
+     * Mostrar diálogo de report
+     */
+    showReportDialog() {
+        return new Promise((resolve) => {
+            const reasons = {
+                'spam': 'Spam',
+                'offensive': 'Ofensivo',
+                'inappropriate': 'Inapropriado',
+                'fake': 'Informação falsa',
+                'other': 'Outro'
+            };
+
+            let options = '';
+            for (const [key, label] of Object.entries(reasons)) {
+                options += `<option value="${key}">${label}</option>`;
+            }
+
+            const content = `
+                <h2><i class="fas fa-flag"></i> Reportar Abuso</h2>
+                <p>Selecione o motivo da denúncia:</p>
+                <select id="reportReason" class="filter-select" style="margin-bottom: 1.5rem;">
+                    ${options}
+                </select>
+                <div style="display: flex; gap: 1rem;">
+                    <button class="btn-submit" onclick="PostsManager.confirmReport()" style="flex: 1;">
+                        <i class="fas fa-check"></i> Confirmar
+                    </button>
+                    <button class="btn-filter" onclick="PostsManager.cancelReport()" style="flex: 1; background: #6b7280;">
+                        <i class="fas fa-times"></i> Cancelar
+                    </button>
+                </div>
+            `;
+
+            document.getElementById('postDetailsContent').innerHTML = content;
+
+            this.reportResolve = resolve;
+        });
+    },
+
+    confirmReport() {
+        const reason = document.getElementById('reportReason').value;
+        if (this.reportResolve) {
+            this.reportResolve(reason);
+            this.reportResolve = null;
+        }
+    },
+
+    cancelReport() {
+        if (this.reportResolve) {
+            this.reportResolve(null);
+            this.reportResolve = null;
+        }
+        closeModal('modalPostDetails');
+    },
+
+    /**
+     * Escapar HTML
+     */
+    escapeHtml(text) {
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
     },
 
     /**

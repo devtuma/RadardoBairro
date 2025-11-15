@@ -110,6 +110,11 @@ function openModal(modalId) {
 function closeModal(modalId) {
     const modal = document.getElementById(modalId);
     modal.style.display = 'none';
+
+    // Se for o modal de novo post, limpar marcador temporário
+    if (modalId === 'modalNewPost') {
+        MapManager.clearTempMarker();
+    }
 }
 
 /**
@@ -119,6 +124,8 @@ function setupModals() {
     // Botão novo post
     document.getElementById('btnNewPost').addEventListener('click', () => {
         openModal('modalNewPost');
+        // Ativar modo de seleção de localização
+        MapManager.enableLocationSelection();
     });
 
     // Botões de fechar (X)

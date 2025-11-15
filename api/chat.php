@@ -18,7 +18,11 @@ if ($method === 'GET') {
             errorResponse('Coordenadas inválidas');
         }
 
-        // Buscar todas as mensagens recentes (últimas 24h)
+        // Limpar mensagens antigas (mais de 20 minutos)
+        $stmt = $db->prepare("DELETE FROM chat_messages WHERE created_at < DATE_SUB(NOW(), INTERVAL 20 MINUTE)");
+        $stmt->execute();
+
+        // Buscar todas as mensagens recentes (últimos 20 minutos)
         $sql = "SELECT
                     id,
                     message,
@@ -26,7 +30,7 @@ if ($method === 'GET') {
                     longitude,
                     created_at
                 FROM chat_messages
-                WHERE created_at >= DATE_SUB(NOW(), INTERVAL 24 HOUR)
+                WHERE created_at >= DATE_SUB(NOW(), INTERVAL 20 MINUTE)
                 ORDER BY created_at DESC
                 LIMIT ?";
 

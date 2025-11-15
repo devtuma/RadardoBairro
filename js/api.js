@@ -151,5 +151,55 @@ const API = {
             }
             return await API.request(url);
         }
+    },
+
+    /**
+     * Comentários de posts
+     */
+    postComments: {
+        // Buscar comentários de um post
+        async get(postId, limit = 100) {
+            return await API.request(`post-comments.php?post_id=${postId}&limit=${limit}`);
+        },
+
+        // Adicionar comentário
+        async add(postId, message) {
+            return await API.request('post-comments.php', {
+                method: 'POST',
+                body: JSON.stringify({
+                    post_id: postId,
+                    message: message
+                })
+            });
+        },
+
+        // Deletar comentário
+        async delete(commentId) {
+            return await API.request(`post-comments.php?id=${commentId}`, {
+                method: 'DELETE'
+            });
+        }
+    },
+
+    /**
+     * Reportar abuso
+     */
+    reports: {
+        // Reportar um item
+        async report(reportType, itemId, reason) {
+            return await API.request('reports.php', {
+                method: 'POST',
+                body: JSON.stringify({
+                    report_type: reportType,
+                    item_id: itemId,
+                    reason: reason
+                })
+            });
+        },
+
+        // Obter contagem de reports
+        async getCount(reportType, itemId) {
+            return await API.request(`reports.php?report_type=${reportType}&item_id=${itemId}`);
+        }
     }
 };

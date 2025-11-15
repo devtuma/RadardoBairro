@@ -667,6 +667,112 @@ body {
     font-weight: 600;
 }
 
+/* Comentários */
+.post-comments {
+    max-height: 400px;
+    overflow-y: auto;
+    margin-bottom: 1.5rem;
+}
+
+.comment-item {
+    padding: 1rem;
+    background: var(--light);
+    border-radius: 8px;
+    margin-bottom: 0.75rem;
+    border-left: 3px solid var(--primary-color);
+}
+
+.comment-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+    font-size: 0.85rem;
+    color: #6b7280;
+}
+
+.comment-time {
+    font-size: 0.8rem;
+}
+
+.comment-text {
+    color: var(--dark);
+    line-height: 1.5;
+}
+
+.comment-input-container {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    margin-top: 1.5rem;
+}
+
+.comment-input-container textarea {
+    padding: 0.75rem;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    font-size: 0.9rem;
+    font-family: inherit;
+    resize: vertical;
+}
+
+.btn-comment {
+    padding: 0.75rem 1.5rem;
+    background: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+    align-self: flex-end;
+}
+
+.btn-comment:hover {
+    background: var(--secondary-color);
+    transform: translateY(-2px);
+}
+
+/* Botão de Report */
+.btn-report {
+    background: rgba(239, 68, 68, 0.1);
+    color: var(--danger-color);
+    border: 2px solid var(--danger-color);
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.3s;
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+.btn-report:hover {
+    background: var(--danger-color);
+    color: white;
+}
+
+.btn-report-small {
+    background: transparent;
+    color: #9ca3af;
+    border: none;
+    padding: 0.25rem;
+    cursor: pointer;
+    transition: color 0.3s;
+    font-size: 0.85rem;
+}
+
+.btn-report-small:hover {
+    color: var(--danger-color);
+}
+
+/* Post Details Header com Report */
+.post-details-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: start;
+    margin-bottom: 1rem;
+}
+
 /* Responsive */
 @media (max-width: 768px) {
     .main-container {

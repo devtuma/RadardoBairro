@@ -73,6 +73,9 @@ const ChatManager = {
                     <div class="chat-message-header">
                         <span><i class="fas fa-user-secret"></i> Anônimo</span>
                         <span>${msg.time_ago} • ${msg.distance} km</span>
+                        <button class="btn-report-small" onclick="ChatManager.reportMessage(${msg.id})" title="Reportar mensagem">
+                            <i class="fas fa-flag"></i>
+                        </button>
                     </div>
                     <div class="chat-message-text">${this.escapeHtml(msg.message)}</div>
                 </div>
@@ -118,6 +121,27 @@ const ChatManager = {
             }
         } catch (error) {
             showToast(error.message || 'Erro ao enviar mensagem', 'error');
+        }
+    },
+
+    /**
+     * Reportar mensagem do chat
+     */
+    async reportMessage(messageId) {
+        // Usar o sistema de diálogo do PostsManager
+        const reason = await PostsManager.showReportDialog();
+        if (!reason) return;
+
+        try {
+            const response = await API.reports.report('chat_message', messageId, reason);
+
+            if (response.success) {
+                showToast(response.message, 'success');
+                // Recarregar mensagens
+                await this.loadMessages();
+            }
+        } catch (error) {
+            showToast(error.message || 'Erro ao reportar mensagem', 'error');
         }
     },
 

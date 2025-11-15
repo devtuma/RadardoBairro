@@ -25,13 +25,14 @@ if ($method === 'GET') {
                     p.latitude,
                     p.longitude,
                     p.created_at,
+                    p.expires_at,
                     COUNT(DISTINCT v.id) as vote_count,
                     SUM(CASE WHEN v.vote_type = 'true' THEN 1 ELSE 0 END) as true_votes,
                     SUM(CASE WHEN v.vote_type = 'false' THEN 1 ELSE 0 END) as false_votes,
                     SUM(CASE WHEN v.vote_type = 'exag' THEN 1 ELSE 0 END) as exag_votes
                 FROM posts p
                 LEFT JOIN votes v ON p.id = v.post_id
-                WHERE 1=1";
+                WHERE p.expires_at > NOW()";
 
         $params = [];
 

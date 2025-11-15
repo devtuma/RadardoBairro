@@ -8,6 +8,7 @@ const MapManager = {
     postMarkers: [],
     tempMarker: null,
     userLocation: null,
+    selectingLocation: false,
 
     /**
      * Inicializar mapa
@@ -27,10 +28,27 @@ const MapManager = {
 
         // Event listener para clique no mapa (selecionar localização para novo post)
         this.map.on('click', (e) => {
-            if (document.getElementById('modalNewPost').style.display === 'block') {
+            if (this.selectingLocation) {
                 this.setTempLocation(e.latlng.lat, e.latlng.lng);
             }
         });
+    },
+
+    /**
+     * Ativar modo de seleção de localização
+     */
+    enableLocationSelection() {
+        this.selectingLocation = true;
+        document.getElementById('map').style.cursor = 'crosshair';
+        showToast('Clique no mapa para selecionar a localização', 'info');
+    },
+
+    /**
+     * Desativar modo de seleção de localização
+     */
+    disableLocationSelection() {
+        this.selectingLocation = false;
+        document.getElementById('map').style.cursor = '';
     },
 
     /**
@@ -120,6 +138,9 @@ const MapManager = {
         const locationInfo = document.getElementById('postLocation');
         locationInfo.innerHTML = `<i class="fas fa-check-circle"></i> Localização selecionada`;
         locationInfo.classList.add('selected');
+
+        // Desativar modo de seleção
+        this.disableLocationSelection();
     },
 
     /**
@@ -130,6 +151,7 @@ const MapManager = {
             this.map.removeLayer(this.tempMarker);
             this.tempMarker = null;
         }
+        this.disableLocationSelection();
     },
 
     /**
