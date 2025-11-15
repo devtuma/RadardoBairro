@@ -1,0 +1,80 @@
+# Radar do Bairro - Configuração Apache
+
+# Habilitar rewrite engine
+RewriteEngine On
+
+# Redirecionar HTTP para HTTPS (recomendado para geolocalização)
+# RewriteCond %{HTTPS} off
+# RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
+# Definir página inicial
+DirectoryIndex index.html
+
+# Habilitar CORS para API
+<IfModule mod_headers.c>
+    Header set Access-Control-Allow-Origin "*"
+    Header set Access-Control-Allow-Methods "GET, POST, PUT, DELETE, OPTIONS"
+    Header set Access-Control-Allow-Headers "Content-Type, Authorization"
+</IfModule>
+
+# Configurações de cache
+<IfModule mod_expires.c>
+    ExpiresActive On
+
+    # Imagens
+    ExpiresByType image/jpeg "access plus 1 year"
+    ExpiresByType image/png "access plus 1 year"
+    ExpiresByType image/gif "access plus 1 year"
+    ExpiresByType image/svg+xml "access plus 1 year"
+
+    # CSS e JavaScript
+    ExpiresByType text/css "access plus 1 month"
+    ExpiresByType application/javascript "access plus 1 month"
+    ExpiresByType text/javascript "access plus 1 month"
+
+    # Fonts
+    ExpiresByType font/woff2 "access plus 1 year"
+    ExpiresByType font/woff "access plus 1 year"
+    ExpiresByType font/ttf "access plus 1 year"
+
+    # HTML não cacheia (para sempre ter versão atualizada)
+    ExpiresByType text/html "access plus 0 seconds"
+</IfModule>
+
+# Comprimir arquivos para melhor performance
+<IfModule mod_deflate.c>
+    AddOutputFilterByType DEFLATE text/html
+    AddOutputFilterByType DEFLATE text/css
+    AddOutputFilterByType DEFLATE text/javascript
+    AddOutputFilterByType DEFLATE application/javascript
+    AddOutputFilterByType DEFLATE application/json
+    AddOutputFilterByType DEFLATE application/xml
+    AddOutputFilterByType DEFLATE text/plain
+</IfModule>
+
+# Bloquear acesso a arquivos sensíveis
+<FilesMatch "\.(sql|md|git|env|log)$">
+    Order allow,deny
+    Deny from all
+</FilesMatch>
+
+# Proteger diretórios
+Options -Indexes
+
+# PHP Settings
+<IfModule mod_php7.c>
+    php_value upload_max_filesize 10M
+    php_value post_max_size 10M
+    php_value max_execution_time 60
+    php_value max_input_time 60
+</IfModule>
+
+# Prevenir acesso direto a includes
+<Files config.php>
+    Order allow,deny
+    Deny from all
+</Files>
+
+# Custom error pages (opcional)
+# ErrorDocument 404 /404.html
+# ErrorDocument 500 /500.html

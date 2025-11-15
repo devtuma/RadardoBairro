@@ -1,0 +1,41 @@
+# Arquivos de configuração com credenciais sensíveis
+api/config.php
+
+# Logs
+*.log
+logs/
+
+# Cache
+*.cache
+
+# Arquivos do sistema operacional
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Backups
+*.bak
+*.backup
+*.sql.gz
+*.zip
+*.tar.gz
+
+# Node modules (caso adicione build tools no futuro)
+node_modules/
+package-lock.json
+
+# Uploads (caso adicione funcionalidade de upload de imagens)
+uploads/
+images/uploads/
+
+# Temporários
+tmp/
+temp/
+*.tmp

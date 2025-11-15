@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Radar do Bairro - Acontecimentos na sua região</title>
+
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <h1><i class="fas fa-radar"></i> Radar do Bairro</h1>
+            <button class="btn-new-post" id="btnNewPost">
+                <i class="fas fa-plus"></i> Novo Post
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <div class="main-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <!-- Filtros -->
+            <div class="filter-section">
+                <h3><i class="fas fa-filter"></i> Filtros</h3>
+
+                <div class="filter-group">
+                    <label>Categorias:</label>
+                    <div class="category-filters">
+                        <label class="checkbox-label">
+                            <input type="checkbox" class="filter-category" value="fofoca" checked>
+                            <span class="category-badge fofoca">
+                                <i class="fas fa-comments"></i> Fofoca
+                            </span>
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" class="filter-category" value="alerta" checked>
+                            <span class="category-badge alerta">
+                                <i class="fas fa-exclamation-triangle"></i> Alerta
+                            </span>
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" class="filter-category" value="evento" checked>
+                            <span class="category-badge evento">
+                                <i class="fas fa-calendar-alt"></i> Evento
+                            </span>
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" class="filter-category" value="achados" checked>
+                            <span class="category-badge achados">
+                                <i class="fas fa-search"></i> Achados/Perdidos
+                            </span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="filter-group">
+                    <label>Período:</label>
+                    <select id="filterTime" class="filter-select">
+                        <option value="24h">Últimas 24 horas</option>
+                        <option value="3d">Últimos 3 dias</option>
+                        <option value="7d">Última semana</option>
+                        <option value="30d">Último mês</option>
+                        <option value="all">Todos</option>
+                    </select>
+                </div>
+
+                <button class="btn-filter" id="btnApplyFilters">
+                    <i class="fas fa-check"></i> Aplicar Filtros
+                </button>
+            </div>
+
+            <!-- Ranking dos posts mais quentes -->
+            <div class="ranking-section">
+                <h3><i class="fas fa-fire"></i> Posts Mais Quentes</h3>
+                <div id="hotPosts" class="hot-posts-list">
+                    <!-- Preenchido dinamicamente -->
+                </div>
+            </div>
+
+            <!-- Chat por proximidade -->
+            <div class="chat-section">
+                <h3><i class="fas fa-comments"></i> Chat do Bairro</h3>
+                <div id="chatMessages" class="chat-messages">
+                    <!-- Mensagens aqui -->
+                </div>
+                <div class="chat-input-container">
+                    <input type="text" id="chatInput" placeholder="Digite sua mensagem..." maxlength="200">
+                    <button id="btnSendChat"><i class="fas fa-paper-plane"></i></button>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Mapa -->
+        <main class="map-container">
+            <div id="map"></div>
+
+            <!-- Contador de notificações -->
+            <div class="notifications-badge" id="notificationsBadge" style="display: none;">
+                <i class="fas fa-bell"></i>
+                <span id="notificationsCount">0</span>
+            </div>
+        </main>
+    </div>
+
+    <!-- Modal: Novo Post -->
+    <div id="modalNewPost" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2><i class="fas fa-map-marker-alt"></i> Novo Acontecimento</h2>
+
+            <form id="formNewPost">
+                <div class="form-group">
+                    <label>Categoria:</label>
+                    <select id="postCategory" required>
+                        <option value="">Selecione...</option>
+                        <option value="fofoca">🗣️ Fofoca</option>
+                        <option value="alerta">⚠️ Alerta</option>
+                        <option value="evento">📅 Evento</option>
+                        <option value="achados">🔍 Achados/Perdidos</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Título:</label>
+                    <input type="text" id="postTitle" maxlength="100" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Descrição:</label>
+                    <textarea id="postDescription" maxlength="500" rows="4" required></textarea>
+                    <small id="charCount">0/500 caracteres</small>
+                </div>
+
+                <div class="form-group">
+                    <label>Localização:</label>
+                    <div id="postLocation" class="location-info">
+                        <i class="fas fa-crosshairs"></i> Clique no mapa para selecionar
+                    </div>
+                    <input type="hidden" id="postLat">
+                    <input type="hidden" id="postLng">
+                </div>
+
+                <button type="submit" class="btn-submit">
+                    <i class="fas fa-check"></i> Publicar Anonimamente
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal: Detalhes do Post -->
+    <div id="modalPostDetails" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <div id="postDetailsContent">
+                <!-- Preenchido dinamicamente -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast de Notificações -->
+    <div id="toast" class="toast"></div>
+
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+    <!-- Custom JS -->
+    <script src="js/config.js"></script>
+    <script src="js/storage.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/map.js"></script>
+    <script src="js/posts.js"></script>
+    <script src="js/chat.js"></script>
+    <script src="js/notifications.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>
