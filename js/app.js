@@ -122,10 +122,18 @@ function closeModal(modalId) {
  */
 function setupModals() {
     // Botão novo post
-    document.getElementById('btnNewPost').addEventListener('click', () => {
+    const btnNewPost = document.getElementById('btnNewPost');
+    console.log('🔘 Botão "Novo Post" encontrado:', btnNewPost ? 'SIM' : 'NÃO');
+
+    btnNewPost.addEventListener('click', () => {
+        console.log('🔘 Botão "Novo Post" CLICADO!');
+        console.log('📂 Abrindo modal...');
         openModal('modalNewPost');
-        // Ativar modo de seleção de localização
+
+        console.log('🎯 Ativando modo de seleção de localização...');
         MapManager.enableLocationSelection();
+
+        console.log('✅ Modal aberto e modo de seleção ativado');
     });
 
     // Botões de fechar (X)

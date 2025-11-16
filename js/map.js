@@ -14,24 +14,45 @@ const MapManager = {
      * Inicializar mapa
      */
     init() {
+        console.log('🗺️ Inicializando Leaflet Map...');
+
         // Criar mapa
         this.map = L.map('map').setView([CONFIG.DEFAULT_LAT, CONFIG.DEFAULT_LNG], CONFIG.DEFAULT_ZOOM);
+        console.log('✅ Mapa Leaflet criado');
 
         // Adicionar tile layer (OpenStreetMap)
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
             maxZoom: 19
         }).addTo(this.map);
+        console.log('✅ Tiles do OpenStreetMap carregados');
+
+        // Aguardar mapa estar pronto antes de adicionar listeners
+        this.map.whenReady(() => {
+            console.log('✅ Mapa está PRONTO para interação');
+
+            // Event listener para clique no mapa (selecionar localização para novo post)
+            this.map.on('click', (e) => {
+                console.log('🖱️ CLIQUE NO MAPA detectado!', {
+                    lat: e.latlng.lat,
+                    lng: e.latlng.lng,
+                    selectingLocation: this.selectingLocation
+                });
+
+                if (this.selectingLocation) {
+                    console.log('✅ Modo seleção ATIVO - Processando localização');
+                    this.setTempLocation(e.latlng.lat, e.latlng.lng);
+                } else {
+                    console.log('⚠️ Modo seleção INATIVO - Clique ignorado');
+                    console.log('💡 Dica: Clique em "+ Novo Post" primeiro para ativar o modo de seleção');
+                }
+            });
+
+            console.log('✅ Event listener de clique registrado no mapa');
+        });
 
         // Obter localização do usuário
         this.getUserLocation();
-
-        // Event listener para clique no mapa (selecionar localização para novo post)
-        this.map.on('click', (e) => {
-            if (this.selectingLocation) {
-                this.setTempLocation(e.latlng.lat, e.latlng.lng);
-            }
-        });
     },
 
     /**
@@ -40,14 +61,27 @@ const MapManager = {
     enableLocationSelection() {
         console.log('🎯 Modo de seleção de localização ATIVADO');
         this.selectingLocation = true;
-        document.getElementById('map').style.cursor = 'crosshair';
+
+        const mapElement = document.getElementById('map');
+        mapElement.style.cursor = 'crosshair';
+
+        // Adicionar classe visual para indicar modo de seleção
+        mapElement.classList.add('selecting-mode');
+        console.log('✅ Classe "selecting-mode" adicionada ao mapa');
 
         // Expandir mapa temporariamente
         const mapContainer = document.querySelector('.map-container');
         mapContainer.classList.add('map-expanded');
         console.log('🗺️ Mapa expandido para seleção');
 
+        // Atualizar tamanho do mapa após expansão
+        setTimeout(() => {
+            this.map.invalidateSize();
+            console.log('🗺️ Tamanho do mapa atualizado');
+        }, 300);
+
         showToast('👆 Clique no mapa para selecionar a localização', 'info');
+        console.log('📢 Toast de instrução exibido');
     },
 
     /**
@@ -56,12 +90,22 @@ const MapManager = {
     disableLocationSelection() {
         console.log('🎯 Modo de seleção de localização DESATIVADO');
         this.selectingLocation = false;
-        document.getElementById('map').style.cursor = '';
+
+        const mapElement = document.getElementById('map');
+        mapElement.style.cursor = '';
+        mapElement.classList.remove('selecting-mode');
+        console.log('✅ Classe "selecting-mode" removida do mapa');
 
         // Retrair mapa
         const mapContainer = document.querySelector('.map-container');
         mapContainer.classList.remove('map-expanded');
         console.log('🗺️ Mapa retraído');
+
+        // Atualizar tamanho do mapa após retração
+        setTimeout(() => {
+            this.map.invalidateSize();
+            console.log('🗺️ Tamanho do mapa atualizado');
+        }, 300);
     },
 
     /**
