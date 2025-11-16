@@ -1,268 +1,499 @@
-# 🚀 Guia Rápido de Instalação - Hostinger
+# 📱 Radar do Bairro - Guia Completo de Instalação
 
-Este guia mostra passo a passo como instalar o **Radar do Bairro** na Hostinger.
+## 📋 Índice
+1. [Requisitos do Sistema](#requisitos)
+2. [Estrutura de Arquivos](#estrutura)
+3. [Configuração do Banco de Dados](#banco)
+4. [Configuração do Servidor](#servidor)
+5. [Upload dos Arquivos](#upload)
+6. [Configuração Final](#configuracao)
+7. [Testes Completos](#testes)
+8. [Solução de Problemas](#troubleshooting)
+9. [Manutenção](#manutencao)
 
-## 📋 Pré-requisitos
+---
 
-- Conta na Hostinger (plano com PHP e MySQL)
-- Acesso ao painel de controle (hPanel)
-- Cliente FTP (FileZilla, WinSCP) OU usar o Gerenciador de Arquivos da Hostinger
+## 🖥️ 1. Requisitos do Sistema {#requisitos}
 
-## 🔧 Instalação em 5 Passos
+### Servidor (Hostinger)
+- ✅ PHP 7.4+ (recomendado: PHP 8.0+)
+- ✅ MySQL 5.7+ ou MariaDB 10.3+
+- ✅ Apache com mod_rewrite
+- ✅ HTTPS (SSL/TLS)
+- ✅ PHP Extensions:
+  - pdo_mysql
+  - gd (processamento de imagens)
+  - fileinfo
+  - json
+  - mbstring
 
-### Passo 1: Fazer Upload dos Arquivos
+### Navegadores Suportados
+- Chrome 90+, Firefox 88+, Safari 14+, Edge 90+
+- Mobile: iOS Safari 14+, Chrome Mobile 90+
 
-#### Opção A: Usando Gerenciador de Arquivos (mais fácil)
+---
 
-1. Acesse o **hPanel** da Hostinger
-2. Vá em **Arquivos** → **Gerenciador de Arquivos**
-3. Navegue até a pasta `public_html`
-4. Clique em **Upload**
-5. Faça upload de todos os arquivos do projeto
+## 📁 2. Estrutura de Arquivos {#estrutura}
 
-#### Opção B: Usando FTP
-
-1. Baixe o [FileZilla](https://filezilla-project.org/)
-2. Configure conexão FTP:
-   - **Host**: ftp.seudominio.com
-   - **Usuário**: seu usuário FTP
-   - **Senha**: sua senha FTP
-   - **Porta**: 21
-3. Conecte e faça upload dos arquivos para `public_html`
-
-### Passo 2: Criar Banco de Dados MySQL
-
-1. No **hPanel**, vá em **Banco de dados** → **MySQL**
-2. Clique em **Criar novo banco de dados**
-3. Preencha:
-   - **Nome do banco**: `radar_do_bairro` (ou outro nome)
-   - **Usuário**: crie um novo usuário
-   - **Senha**: crie uma senha forte
-4. Clique em **Criar**
-5. **Anote**: Nome do banco, usuário e senha
-
-### Passo 3: Importar Estrutura do Banco
-
-1. No hPanel, clique em **Gerenciar** no banco criado
-2. Isso abrirá o **phpMyAdmin**
-3. Selecione seu banco de dados na esquerda
-4. Clique na aba **SQL**
-5. Abra o arquivo `database/schema.sql` no seu computador
-6. **Copie todo o conteúdo** do arquivo
-7. **Cole** no campo SQL do phpMyAdmin
-8. Clique em **Executar**
-
-✅ Pronto! As tabelas foram criadas.
-
-### Passo 4: Configurar Conexão com Banco
-
-1. No Gerenciador de Arquivos, navegue até `api/config.php`
-2. Clique com botão direito → **Editar**
-3. Altere as linhas:
-
-```php
-define('DB_HOST', 'localhost');          // Deixe como localhost
-define('DB_NAME', 'u123456_radar');      // ALTERE: nome do seu banco
-define('DB_USER', 'u123456_user');       // ALTERE: usuário do banco
-define('DB_PASS', 'SuaSenha123');        // ALTERE: senha do banco
+```
+RadardoBairro/
+├── index.html              # Página principal
+├── manifest.json           # PWA config
+├── sw.js                   # Service Worker
+├── icon.png               # Ícone do app
+├── api/                   # Backend PHP
+│   ├── config.php
+│   ├── posts.php
+│   ├── votes.php
+│   ├── chat.php
+│   ├── notifications.php
+│   ├── hot-posts.php
+│   ├── post-comments.php
+│   ├── reports.php
+│   ├── upload.php
+│   └── stats.php
+├── css/style.css
+├── js/
+│   ├── config.js
+│   ├── storage.js
+│   ├── theme.js
+│   ├── api.js
+│   ├── map.js
+│   ├── posts.js
+│   ├── chat.js
+│   ├── notifications.js
+│   ├── stats.js
+│   └── app.js
+├── database/
+│   ├── migration-hostinger.sql
+│   └── migration-add-images.sql
+└── uploads/posts/         # Criar este diretório
 ```
 
-4. Clique em **Salvar**
+---
 
-> **Dica**: Na Hostinger, o nome do banco geralmente é `u[ID]_nomedobanco`
+## 🗄️ 3. Configuração do Banco de Dados {#banco}
 
-### Passo 5: Configurar Localização Inicial (Opcional)
+### Passo 1: Criar Banco no Hostinger
 
-1. Edite o arquivo `js/config.js`
-2. Altere as coordenadas para sua cidade:
+1. **Acesse hPanel:** https://hpanel.hostinger.com
+2. **MySQL Databases** → Create Database
+   ```
+   Nome: u758469769_radarbairro
+   ```
+3. **Criar Usuário:**
+   ```
+   User: u758469769_admin
+   Pass: Life0852new!   (ou sua senha segura)
+   ```
+   ⚠️ **ANOTE ESTAS CREDENCIAIS!**
+
+4. **Associar usuário ao banco:**
+   - Selecione usuário + banco
+   - All Privileges → Add
+
+### Passo 2: Executar Schema
+
+1. **phpMyAdmin** → Selecione o banco
+2. **Aba SQL** → Cole conteúdo de:
+   ```
+   database/migration-hostinger.sql
+   ```
+3. **Executar (Go)**
+4. Repita com:
+   ```
+   database/migration-add-images.sql
+   ```
+
+### Passo 3: Verificar Tabelas
+
+Devem existir:
+```
+✓ posts
+✓ votes
+✓ chat_messages
+✓ post_comments
+✓ reports
+```
+
+---
+
+## 🌐 4. Configuração do Servidor {#servidor}
+
+### Passo 1: Editar api/config.php
+
+```php
+// Linha 9-12
+define('DB_HOST', 'localhost');
+define('DB_NAME', 'u758469769_radarbairro');  // SEU BANCO
+define('DB_USER', 'u758469769_admin');        // SEU USUÁRIO
+define('DB_PASS', 'Life0852new!');            // SUA SENHA
+```
+
+### Passo 2: Coordenadas em js/config.js
 
 ```javascript
-// Exemplo: Rio de Janeiro
-DEFAULT_LAT: -22.9068,
-DEFAULT_LNG: -43.1729,
+// Linha 9-11
+DEFAULT_LAT: -23.5505,  // Sua latitude
+DEFAULT_LNG: -46.6333,  // Sua longitude
+DEFAULT_ZOOM: 15,
 ```
 
-Use [este site](https://www.latlong.net/) para descobrir coordenadas da sua cidade.
+**Como obter:** Google Maps → Clique direito → Copiar coordenadas
 
-3. Salve o arquivo
+### Passo 3: PHP Configuration (hPanel)
 
-## ✅ Testar a Instalação
+1. **Advanced** → **PHP Configuration**
+2. Versão: 8.0+
+3. Extensions ativas:
+   - gd ✓
+   - fileinfo ✓
+   - pdo_mysql ✓
+4. Limites:
+   - upload_max_filesize: 10M
+   - post_max_size: 10M
 
-1. Acesse `http://seudominio.com`
-2. Você deve ver o mapa carregado
-3. Permita acesso à localização quando solicitado
-4. Teste criar um novo post clicando em **+ Novo Post**
+### Passo 4: Criar Diretório de Uploads
 
-## 🐛 Problemas Comuns
+**Via File Manager:**
+```
+public_html/
+└── uploads/
+    └── posts/
+```
 
-### Erro: "Erro ao conectar com o banco de dados"
+**Permissões:** 755
 
-**Solução**: Verifique se as credenciais em `api/config.php` estão corretas.
+---
+
+## 📤 5. Upload dos Arquivos {#upload}
+
+### Método 1: File Manager (Recomendado)
+
+1. hPanel → Files → File Manager
+2. Navegue: public_html/
+3. Upload → Selecione TODOS os arquivos
+4. Aguarde conclusão
+
+### Método 2: FTP (FileZilla)
+
+```
+Host: ftp.comprafacilagora.com
+User: (ver hPanel → FTP Accounts)
+Pass: (ver hPanel → FTP Accounts)
+Port: 21
+```
+
+Upload para: /public_html/
+
+---
+
+## ⚙️ 6. Configuração Final {#configuracao}
+
+### Teste de Conexão com Banco
+
+Crie temporariamente: `test-db.php`
 
 ```php
-// Certifique-se de usar as credenciais corretas
-define('DB_HOST', 'localhost');  // Geralmente é localhost
-define('DB_NAME', 'nome_exato_do_banco');
-define('DB_USER', 'nome_exato_do_usuario');
-define('DB_PASS', 'senha_exata');
+<?php
+$pdo = new PDO("mysql:host=localhost;dbname=u758469769_radarbairro", 
+               "u758469769_admin", "Life0852new!");
+echo "✅ Conexão OK!";
+?>
 ```
 
-### Erro 500 - Internal Server Error
+Acesse: https://comprafacilagora.com/test-db.php
 
-**Possíveis causas**:
+⚠️ **DELETE após teste!**
 
-1. **Permissões de arquivo**: No Gerenciador de Arquivos, clique com botão direito na pasta `api` → **Permissões** → Defina como `755`
+### Configurar HTTPS
 
-2. **Erros de sintaxe PHP**: Verifique os logs de erro:
-   - hPanel → **Avançado** → **Logs de Erro**
+1. hPanel → Advanced → SSL/TLS
+2. Install SSL (Let's Encrypt grátis)
+3. Aguarde ativação (até 24h)
 
-### Mapa não aparece
-
-**Solução**:
-
-1. Limpe o cache do navegador (Ctrl + Shift + Delete)
-2. Verifique se os arquivos JavaScript foram carregados corretamente
-3. Abra o Console do navegador (F12) e veja se há erros
-
-### GPS não funciona
-
-**Solução**:
-
-1. **Configure HTTPS**: No hPanel → **Avançado** → **SSL** → Instale SSL gratuito
-2. Ative o redirecionamento HTTPS no `.htaccess` (descomente as linhas):
+### Force HTTPS (.htaccess)
 
 ```apache
+RewriteEngine On
 RewriteCond %{HTTPS} off
 RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
 ```
 
-### Posts não aparecem
+---
 
-**Solução**:
+## 🧪 7. Testes Completos {#testes}
 
-1. Abra o Console do navegador (F12)
-2. Vá na aba **Network**
-3. Tente criar um post
-4. Veja se há erros nas requisições à API
-5. Verifique se `api/posts.php` está retornando JSON
+### ✅ Checklist Essencial
 
-**Teste a API diretamente**:
-- Acesse: `http://seudominio.com/api/posts.php`
-- Deve retornar JSON com a lista de posts
-
-## 🔐 Segurança - Produção
-
-Antes de colocar em produção, faça:
-
-### 1. Remover dados de exemplo
-
-Edite `database/schema.sql` e **remova** as linhas:
-
-```sql
--- Apague estas linhas antes de importar em produção
-INSERT INTO posts (category, title, description, latitude, longitude) VALUES
-...
-INSERT INTO votes (post_id, vote_type, user_hash) VALUES
-...
+#### 1. Carregamento
+```
+□ Página carrega
+□ Mapa aparece
+□ Console sem erros (F12)
 ```
 
-### 2. Configurar permissões
-
-```bash
-# No SSH (se tiver acesso):
-chmod 755 api/
-chmod 644 api/*.php
+#### 2. Criar Post
+```
+□ Clicar "+ Novo Post"
+□ Modal abre
+□ Clicar no mapa
+□ Console mostra:
+   >>> ENABLE LOCATION SELECTION <<<
+   >>> MAP CLICK DETECTED <<<
+   >>> SET TEMP LOCATION <<<
+   >>> LOCATION SET SUCCESSFULLY <<<
+□ Marcador verde aparece
+□ Formulário mostra "Localização selecionada"
+□ Preencher e publicar
+□ Post aparece no mapa
 ```
 
-### 3. Habilitar HTTPS
-
-1. No hPanel → **SSL** → Instale certificado gratuito
-2. Force HTTPS no `.htaccess` (já configurado)
-
-### 4. Desabilitar display de erros
-
-Em `api/config.php`, adicione no início:
-
-```php
-// Desabilitar exibição de erros em produção
-error_reporting(0);
-ini_set('display_errors', '0');
-
-// Mas mantenha log de erros
-ini_set('log_errors', '1');
-ini_set('error_log', '/caminho/para/logs/php_errors.log');
+#### 3. Upload de Imagem
+```
+□ "Adicionar Foto"
+□ Selecionar imagem (max 5MB)
+□ Preview aparece
+□ Publicar
+□ Imagem nos detalhes do post
 ```
 
-## 📊 Monitoramento
-
-### Verificar se está tudo funcionando:
-
-1. **Teste criar post**: Crie um post de teste
-2. **Teste votação**: Vote em um post
-3. **Teste chat**: Envie uma mensagem
-4. **Teste filtros**: Filtre por categoria
-5. **Teste notificações**: Aguarde alguns minutos
-
-### Logs úteis:
-
-- **Logs de Erro PHP**: hPanel → Avançado → Logs de Erro
-- **Logs de Acesso**: hPanel → Avançado → Logs de Acesso
-- **Console do navegador**: F12 → Console
-
-## 🎉 Pronto!
-
-Seu **Radar do Bairro** está instalado e funcionando!
-
-### Próximos passos:
-
-- Compartilhe com sua comunidade
-- Personalize cores e textos
-- Adicione mais funcionalidades
-- Monitore o uso
-
-## 💡 Dicas de Personalização
-
-### Alterar cores
-
-Edite `css/style.css`:
-
-```css
-:root {
-    --primary-color: #6366f1;  /* Cor principal */
-    --secondary-color: #8b5cf6; /* Cor secundária */
-}
+#### 4. Votação
+```
+□ Abrir post
+□ Clicar "Verdadeiro"
+□ Toast: "Voto registrado!"
+□ Contador aumenta
 ```
 
-### Alterar nome do app
-
-Edite `index.html`:
-
-```html
-<title>Seu Nome Aqui</title>
-<h1>Seu Nome Aqui</h1>
+#### 5. Comentários
+```
+□ Digitar comentário
+□ Enviar
+□ Aparece na lista
+□ Contador atualiza
 ```
 
-### Adicionar Google Analytics
-
-Adicione antes de `</head>` no `index.html`:
-
-```html
-<!-- Google Analytics -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-  gtag('config', 'G-XXXXXXXXXX');
-</script>
+#### 6. Chat
+```
+□ Enviar mensagem
+□ Aparece na lista
+□ Distância e horário corretos
 ```
 
-## 🆘 Precisa de Ajuda?
+#### 7. Estatísticas
+```
+□ Clicar ícone gráfico (header)
+□ Modal abre
+□ Dados aparecem
+□ Top 5 posts visíveis
+```
 
-- 📚 Leia o [README.md](README.md) completo
-- 🐛 Reporte problemas no GitHub
-- 💬 Consulte a documentação da [Hostinger](https://support.hostinger.com/pt-BR/)
+#### 8. Modo Escuro/Claro
+```
+□ Clicar lua/sol
+□ Tema muda
+□ Recarregar página
+□ Tema persiste
+```
+
+#### 9. Compartilhamento
+```
+□ Abrir post
+□ Clicar WhatsApp
+□ Janela abre
+□ Copiar link funciona
+```
+
+#### 10. PWA (Mobile)
+```
+□ Chrome mostra "Adicionar à tela"
+□ Instalar
+□ Ícone na tela inicial
+□ Abre em tela cheia
+```
 
 ---
 
-**Boa sorte com seu projeto! 🚀**
+## 🔧 8. Solução de Problemas {#troubleshooting}
+
+### Página em Branco
+
+**Solução:**
+```php
+// Adicione em api/config.php (linha 2)
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+
+// Verifique logs: hPanel → Error Logs
+```
+
+### Erro de Banco de Dados
+
+**Verifique:**
+```
+1. Credenciais em api/config.php
+2. Usuário tem permissões
+3. Banco existe e tem tabelas
+```
+
+### Mapa Não Aparece
+
+**Soluções:**
+```javascript
+// F12 → Console
+// Procure erros de Leaflet
+// Verifique coordenadas em js/config.js
+// Latitude: -90 a 90
+// Longitude: -180 a 180
+```
+
+### Clique no Mapa Não Funciona
+
+**Debug:**
+```javascript
+// 1. F12 → Console
+// 2. Clicar "+ Novo Post"
+// Deve ver: >>> ENABLE LOCATION SELECTION <<<
+
+// 3. Clicar no mapa
+// Deve ver: >>> MAP CLICK DETECTED <<<
+
+// Se não vê logs:
+// - Ctrl+F5 (recarregar forçado)
+// - Limpar cache
+// - Verificar se js/map.js carregou
+```
+
+### Upload de Imagens Falha
+
+**Verificar:**
+```bash
+1. Diretório existe: uploads/posts/
+2. Permissões: 755
+3. PHP limites: upload_max_filesize = 10M
+4. Extensão GD ativa
+```
+
+### Posts Não Aparecem
+
+**Debug:**
+```sql
+-- No phpMyAdmin:
+SELECT * FROM posts WHERE expires_at > NOW();
+
+-- Se vazio: criar post de teste
+-- Verificar filtros (todas categorias marcadas?)
+```
+
+### Chat Erro 429
+
+**Normal!** Rate limiting funcionando.
+- Aguarde 3 segundos entre mensagens
+
+### Service Worker Não Registra
+
+**Soluções:**
+```
+1. Requer HTTPS (ou localhost)
+2. Verificar path em js/app.js linha 172
+3. Chrome DevTools → Application → Service Workers → Unregister all
+```
+
+---
+
+## 🔄 9. Manutenção {#manutencao}
+
+### Backup Mensal
+
+```bash
+# Banco de dados
+mysqldump -u usuario -p banco > backup.sql
+
+# Arquivos
+tar -czf backup.tar.gz public_html/
+```
+
+### Limpeza Mensal
+
+```sql
+-- Deletar posts expirados (7+ dias)
+DELETE FROM posts 
+WHERE expires_at < DATE_SUB(NOW(), INTERVAL 7 DAY);
+
+-- Deletar chat antigo (24h+)
+DELETE FROM chat_messages 
+WHERE created_at < DATE_SUB(NOW(), INTERVAL 1 DAY);
+```
+
+### Monitoramento
+
+```sql
+-- Posts por dia (últimos 30 dias)
+SELECT DATE(created_at) as data, COUNT(*) as posts
+FROM posts
+GROUP BY DATE(created_at)
+ORDER BY data DESC
+LIMIT 30;
+
+-- Usuários únicos (30 dias)
+SELECT COUNT(DISTINCT user_hash) as usuarios
+FROM posts
+WHERE created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY);
+```
+
+---
+
+## 🎯 Resumo Rápido (5 Minutos)
+
+```bash
+1. Criar banco MySQL (hPanel)
+2. Executar migration-hostinger.sql (phpMyAdmin)
+3. Executar migration-add-images.sql
+4. Editar api/config.php (credenciais)
+5. Editar js/config.js (coordenadas)
+6. Upload arquivos → public_html/
+7. Criar uploads/posts/ (755)
+8. Ativar SSL
+9. Testar: criar post
+10. Instalar PWA (mobile)
+```
+
+**Tempo: 30-60 minutos**
+
+---
+
+## 📞 Comandos Úteis
+
+```bash
+# Testar sintaxe PHP
+php -l api/config.php
+
+# Ver logs em tempo real
+tail -f error_log
+
+# Verificar permissões
+ls -la uploads/
+```
+
+---
+
+## ✅ Checklist Pré-Produção
+
+```
+□ Banco configurado
+□ Tabelas criadas
+□ Triggers ativos
+□ Credenciais corretas
+□ uploads/ criado (755)
+□ SSL ativado
+□ Service Worker OK
+□ Testes passando
+□ Backup configurado
+```
+
+---
+
+**Bom desenvolvimento! 🚀**
+
+*Versão 2.0 - 2025*
