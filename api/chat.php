@@ -92,15 +92,15 @@ if ($method === 'POST') {
             errorResponse('Coordenadas inválidas');
         }
 
-        // Rate limiting: verificar se usuário enviou mensagem nos últimos 10 segundos
+        // Rate limiting: verificar se usuário enviou mensagem nos últimos 3 segundos
         $stmt = $db->prepare("
             SELECT id FROM chat_messages
-            WHERE user_hash = ? AND created_at >= DATE_SUB(NOW(), INTERVAL 10 SECOND)
+            WHERE user_hash = ? AND created_at >= DATE_SUB(NOW(), INTERVAL 3 SECOND)
         ");
         $stmt->execute([$userHash]);
 
         if ($stmt->fetch()) {
-            errorResponse('Aguarde alguns segundos antes de enviar outra mensagem', 429);
+            errorResponse('Aguarde 3 segundos antes de enviar outra mensagem', 429);
         }
 
         // Inserir mensagem
