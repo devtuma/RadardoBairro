@@ -162,18 +162,31 @@ function setupModals() {
  */
 document.addEventListener('DOMContentLoaded', () => {
     console.log('🚀 Iniciando Radar do Bairro...');
+    console.log('📍 API URL:', CONFIG.API_URL);
+    console.log('🗺️ Localização padrão:', { lat: CONFIG.DEFAULT_LAT, lng: CONFIG.DEFAULT_LNG });
 
     // Configurar modais
+    console.log('⚙️ Configurando modais...');
     setupModals();
 
     // Inicializar módulos
+    console.log('🗺️ Inicializando mapa...');
     MapManager.init();
+
+    console.log('📝 Inicializando posts...');
     PostsManager.init();
+
+    console.log('💬 Inicializando chat...');
     ChatManager.init();
+
+    console.log('🔔 Inicializando notificações...');
     NotificationsManager.init();
+
+    console.log('🔥 Inicializando posts quentes...');
     HotPostsManager.init();
 
     console.log('✅ Aplicação iniciada com sucesso!');
+    console.log('📊 Todos os módulos carregados e prontos para uso');
 
     // Mostrar mensagem de boas-vindas
     setTimeout(() => {

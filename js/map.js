@@ -38,17 +38,45 @@ const MapManager = {
      * Ativar modo de seleção de localização
      */
     enableLocationSelection() {
+        console.log('🎯 Modo de seleção de localização ATIVADO');
         this.selectingLocation = true;
         document.getElementById('map').style.cursor = 'crosshair';
-        showToast('Clique no mapa para selecionar a localização', 'info');
+
+        // Expandir mapa temporariamente
+        const mapContainer = document.querySelector('.map-container');
+        mapContainer.classList.add('map-expanded');
+        console.log('🗺️ Mapa expandido para seleção');
+
+        showToast('👆 Clique no mapa para selecionar a localização', 'info');
     },
 
     /**
      * Desativar modo de seleção de localização
      */
     disableLocationSelection() {
+        console.log('🎯 Modo de seleção de localização DESATIVADO');
         this.selectingLocation = false;
         document.getElementById('map').style.cursor = '';
+
+        // Retrair mapa
+        const mapContainer = document.querySelector('.map-container');
+        mapContainer.classList.remove('map-expanded');
+        console.log('🗺️ Mapa retraído');
+    },
+
+    /**
+     * Alternar tamanho do mapa
+     */
+    toggleMapSize() {
+        const mapContainer = document.querySelector('.map-container');
+        mapContainer.classList.toggle('map-expanded');
+
+        // Atualizar tamanho do mapa do Leaflet
+        setTimeout(() => {
+            this.map.invalidateSize();
+        }, 300);
+
+        console.log('🗺️ Mapa alternado:', mapContainer.classList.contains('map-expanded') ? 'EXPANDIDO' : 'NORMAL');
     },
 
     /**
@@ -116,6 +144,8 @@ const MapManager = {
      * Definir localização temporária (para novo post)
      */
     setTempLocation(lat, lng) {
+        console.log('📍 Localização selecionada:', { lat, lng });
+
         // Remover marcador temporário anterior
         if (this.tempMarker) {
             this.map.removeLayer(this.tempMarker);
@@ -131,16 +161,23 @@ const MapManager = {
             })
         }).addTo(this.map);
 
+        console.log('✅ Marcador temporário adicionado ao mapa');
+
         // Atualizar campos do formulário
         document.getElementById('postLat').value = lat;
         document.getElementById('postLng').value = lng;
 
         const locationInfo = document.getElementById('postLocation');
-        locationInfo.innerHTML = `<i class="fas fa-check-circle"></i> Localização selecionada`;
+        locationInfo.innerHTML = `<i class="fas fa-check-circle"></i> Localização selecionada (${lat.toFixed(4)}, ${lng.toFixed(4)})`;
         locationInfo.classList.add('selected');
+
+        console.log('✅ Formulário atualizado com coordenadas');
 
         // Desativar modo de seleção
         this.disableLocationSelection();
+
+        // Mostrar confirmação
+        showToast('✓ Localização selecionada com sucesso!', 'success');
     },
 
     /**

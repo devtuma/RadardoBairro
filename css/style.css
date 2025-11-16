@@ -307,13 +307,47 @@ body {
 
 /* Mapa */
 .map-container {
-    flex: 1;
+    flex: 0 0 30%;
     position: relative;
+    transition: flex 0.3s ease;
+    min-width: 250px;
+}
+
+.map-container.map-expanded {
+    flex: 0 0 70%;
 }
 
 #map {
     width: 100%;
     height: 100%;
+}
+
+/* Botão de toggle do mapa */
+.btn-toggle-map {
+    position: absolute;
+    top: 70px;
+    right: 20px;
+    background: white;
+    color: var(--primary-color);
+    border: 2px solid var(--primary-color);
+    padding: 0.75rem;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    z-index: 999;
+    font-size: 1rem;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.btn-toggle-map:hover {
+    background: var(--primary-color);
+    color: white;
+    transform: scale(1.1);
 }
 
 /* Notificações Badge */
@@ -781,28 +815,73 @@ body {
 
     .sidebar {
         width: 100%;
-        max-height: 40vh;
+        max-height: 35vh;
         border-right: none;
         border-bottom: 1px solid var(--border);
+        order: 2;
     }
 
     .map-container {
-        height: 60vh;
+        width: 100%;
+        flex: 0 0 40vh;
+        order: 1;
+    }
+
+    .map-container.map-expanded {
+        flex: 0 0 70vh;
     }
 
     .header h1 {
-        font-size: 1.2rem;
+        font-size: 1.1rem;
     }
 
     .btn-new-post {
-        padding: 0.5rem 1rem;
-        font-size: 0.9rem;
+        padding: 0.5rem 0.75rem;
+        font-size: 0.85rem;
     }
 
     .modal-content {
         width: 95%;
-        margin: 10% auto;
-        padding: 1.5rem;
+        margin: 5% auto;
+        padding: 1.25rem;
+        max-height: 90vh;
+        overflow-y: auto;
+    }
+
+    /* Ajustes do sidebar mobile */
+    .filter-section,
+    .ranking-section,
+    .chat-section {
+        padding: 1rem;
+    }
+
+    .ranking-section {
+        max-height: 200px;
+        overflow-y: auto;
+    }
+
+    .chat-section {
+        min-height: 200px;
+        max-height: 300px;
+    }
+
+    /* Ocultar elementos menos importantes em mobile */
+    .filter-section {
+        display: none;
+    }
+
+    /* Botão toggle mapa em posição melhor */
+    .btn-toggle-map {
+        top: 10px;
+        right: 10px;
+    }
+
+    /* Notificações em mobile */
+    .notifications-badge {
+        top: 10px;
+        right: 60px;
+        padding: 0.5rem 0.75rem;
+        font-size: 0.85rem;
     }
 }
 

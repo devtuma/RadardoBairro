@@ -9,6 +9,8 @@ const API = {
     async request(endpoint, options = {}) {
         try {
             const url = `${CONFIG.API_URL}/${endpoint}`;
+            console.log(`📡 API Request: ${options.method || 'GET'} ${endpoint}`);
+
             const response = await fetch(url, {
                 headers: {
                     'Content-Type': 'application/json',
@@ -18,14 +20,16 @@ const API = {
             });
 
             const data = await response.json();
+            console.log(`✅ API Response (${endpoint}):`, data);
 
             if (!response.ok) {
+                console.error(`❌ API Error (${endpoint}):`, data);
                 throw new Error(data.error || 'Erro na requisição');
             }
 
             return data;
         } catch (error) {
-            console.error('Erro na API:', error);
+            console.error(`❌ API Request Failed (${endpoint}):`, error);
             throw error;
         }
     },

@@ -153,17 +153,26 @@ const PostsManager = {
      */
     async showPostDetails(postId) {
         try {
+            console.log('📖 Abrindo detalhes do post:', postId);
             const post = this.currentPosts.find(p => p.id === postId);
-            if (!post) return;
+            if (!post) {
+                console.error('❌ Post não encontrado:', postId);
+                return;
+            }
 
             // Buscar votos
+            console.log('🗳️ Buscando votos do post:', postId);
             const votesResponse = await API.votes.get(postId);
             const votes = votesResponse.data;
+            console.log('✅ Votos carregados:', votes);
 
             // Buscar comentários
+            console.log('💬 Buscando comentários do post:', postId);
             const commentsResponse = await API.postComments.get(postId);
+            console.log('📦 Resposta da API de comentários:', commentsResponse);
             const comments = commentsResponse.data.comments || [];
             const commentCount = comments.length;
+            console.log(`✅ ${commentCount} comentários carregados`);
 
             // Criar conteúdo do modal
             const content = `
