@@ -126,14 +126,74 @@ function setupModals() {
     console.log('🔘 Botão "Novo Post" encontrado:', btnNewPost ? 'SIM' : 'NÃO');
 
     btnNewPost.addEventListener('click', () => {
+
+    // Botão estatísticas
+    document.getElementById('btnStats').addEventListener('click', () => {
+        console.log('📊 Abrindo estatísticas...');
+        StatsManager.showStats();
+    });
         console.log('🔘 Botão "Novo Post" CLICADO!');
+
+    // Botão estatísticas
+    document.getElementById('btnStats').addEventListener('click', () => {
+        console.log('📊 Abrindo estatísticas...');
+        StatsManager.showStats();
+    });
         console.log('📂 Abrindo modal...');
+
+    // Botão estatísticas
+    document.getElementById('btnStats').addEventListener('click', () => {
+        console.log('📊 Abrindo estatísticas...');
+        StatsManager.showStats();
+    });
         openModal('modalNewPost');
 
+    // Botão estatísticas
+    document.getElementById('btnStats').addEventListener('click', () => {
+        console.log('📊 Abrindo estatísticas...');
+        StatsManager.showStats();
+    });
+
+
+    // Botão estatísticas
+    document.getElementById('btnStats').addEventListener('click', () => {
+        console.log('📊 Abrindo estatísticas...');
+        StatsManager.showStats();
+    });
         console.log('🎯 Ativando modo de seleção de localização...');
+
+    // Botão estatísticas
+    document.getElementById('btnStats').addEventListener('click', () => {
+        console.log('📊 Abrindo estatísticas...');
+        StatsManager.showStats();
+    });
         MapManager.enableLocationSelection();
 
+    // Botão estatísticas
+    document.getElementById('btnStats').addEventListener('click', () => {
+        console.log('📊 Abrindo estatísticas...');
+        StatsManager.showStats();
+    });
+
+
+    // Botão estatísticas
+    document.getElementById('btnStats').addEventListener('click', () => {
+        console.log('📊 Abrindo estatísticas...');
+        StatsManager.showStats();
+    });
         console.log('✅ Modal aberto e modo de seleção ativado');
+
+    // Botão estatísticas
+    document.getElementById('btnStats').addEventListener('click', () => {
+        console.log('📊 Abrindo estatísticas...');
+        StatsManager.showStats();
+    });
+    });
+
+    // Botão estatísticas
+    document.getElementById('btnStats').addEventListener('click', () => {
+        console.log('📊 Abrindo estatísticas...');
+        StatsManager.showStats();
     });
 
     // Botões de fechar (X)
@@ -166,12 +226,31 @@ function setupModals() {
 }
 
 /**
+ * Registrar Service Worker (PWA)
+ */
+if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/sw.js')
+            .then((registration) => {
+                console.log('✅ Service Worker registrado:', registration.scope);
+            })
+            .catch((error) => {
+                console.error('❌ Erro ao registrar Service Worker:', error);
+            });
+    });
+}
+
+/**
  * Inicializar aplicação
  */
 document.addEventListener('DOMContentLoaded', () => {
     console.log('🚀 Iniciando Radar do Bairro...');
     console.log('📍 API URL:', CONFIG.API_URL);
     console.log('🗺️ Localização padrão:', { lat: CONFIG.DEFAULT_LAT, lng: CONFIG.DEFAULT_LNG });
+
+    // Inicializar tema
+    console.log('🎨 Inicializando tema...');
+    ThemeManager.init();
 
     // Configurar modais
     console.log('⚙️ Configurando modais...');

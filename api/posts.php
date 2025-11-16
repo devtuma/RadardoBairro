@@ -22,6 +22,7 @@ if ($method === 'GET') {
                     p.category,
                     p.title,
                     p.description,
+                    p.image_url,
                     p.latitude,
                     p.longitude,
                     p.created_at,
@@ -112,6 +113,7 @@ if ($method === 'POST') {
         $category = sanitizeInput($input['category'] ?? '');
         $title = sanitizeInput($input['title'] ?? '');
         $description = sanitizeInput($input['description'] ?? '');
+        $imageUrl = sanitizeInput($input['image_url'] ?? '');
         $latitude = floatval($input['latitude'] ?? 0);
         $longitude = floatval($input['longitude'] ?? 0);
 
@@ -141,11 +143,11 @@ if ($method === 'POST') {
         }
 
         // Inserir post
-        $sql = "INSERT INTO posts (category, title, description, latitude, longitude)
-                VALUES (?, ?, ?, ?, ?)";
+        $sql = "INSERT INTO posts (category, title, description, image_url, latitude, longitude)
+                VALUES (?, ?, ?, ?, ?, ?)";
 
         $stmt = $db->prepare($sql);
-        $stmt->execute([$category, $title, $description, $latitude, $longitude]);
+        $stmt->execute([$category, $title, $description, $imageUrl, $latitude, $longitude]);
 
         $postId = $db->lastInsertId();
 
